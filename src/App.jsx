@@ -7,6 +7,7 @@ import Inventario from './pages/Inventario';
 import NuevoPrestamo from './pages/NuevoPrestamo';
 import ListaPrestamos from './pages/ListaPrestamos';
 import DetallePrestamo from './pages/DetallePrestamo';
+import NuevoInstrumento from './pages/NuevoInstrumento'; // Importar el nuevo componente
 
 const theme = createTheme({
   palette: {
@@ -27,6 +28,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/inventario" element={<Inventario />} />
+          <Route path="/inventario/nuevo" element={<NuevoInstrumento />} /> {/* Añadir la nueva ruta */}
           <Route path="/nuevo-prestamo" element={<NuevoPrestamo />} />
           <Route path="/prestamos" element={<ListaPrestamos />} />
           <Route path="/prestamo/:id" element={<DetallePrestamo />} />

@@ -15,7 +15,7 @@ Esta sección documenta el estado actual y las características implementadas en
 ### **Pila Tecnológica**
 - **Frontend:** React (con Vite)
 - **Base de Datos:** Cloud Firestore
-- **Almacenamiento de Archivos:** ImageKit.io
+- **Almacenamiento de Archivos:** Cloudinary
 - **Hosting:** Firebase Hosting
 - **Librería de Componentes:** Material-UI (MUI)
 - **Enrutamiento:** React Router DOM
@@ -69,7 +69,6 @@ Esta sección documenta el estado actual y las características implementadas en
   - `services/`: Lógica de negocio y comunicación con servicios externos.
     - `firebase.js`: Configuración e inicialización de Firebase.
     - `firestoreService.js`: Funciones para interactuar con Firestore (CRUD).
-    - `imagekitService.js`: Funciones para subir y gestionar imágenes con ImageKit.io.
   - `hooks/`: Hooks personalizados (ej. `useAuth.js` en el futuro).
   - `App.jsx`: Componente raíz con el enrutador.
   - `main.jsx`: Punto de entrada de la aplicación.
@@ -83,46 +82,35 @@ Esta sección documenta el estado actual y las características implementadas en
 
 ---
 
-## 3. Plan de Acción (MVP Inicial)
+## 3. Plan de Acción (Versión 2)
 
-Este es el plan de trabajo para la solicitud actual.
+Este es el plan de trabajo para la funcionalidad de **"Añadir Nuevo Instrumento"**.
 
-1.  **Configuración del Entorno:**
-    - **Instalar dependencias:** `firebase`, `react-router-dom`, `@mui/material`, `@emotion/react`, `@emotion/styled`, `@mui/icons-material`, `imagekit-javascript`.
-    - **Crear archivo de configuración de Firebase:** `src/firebase.js` con placeholders para que el usuario complete sus credenciales.
-    - **Configurar `mcp.json`:** Añadir la configuración del servidor de Firebase.
+1.  **Crear la Rama de Desarrollo:**
+    - Crear y moverse a una nueva rama de feature: `git checkout -b feature/add-instrument-form`.
 
-2.  **Estructura y Navegación Básica:**
-    - Crear la estructura de carpetas (`pages`, `components`, `services`).
-    - Configurar el enrutador principal en `App.jsx` con las rutas para `Dashboard`, `Inventario`, y `NuevoPrestamo`.
-    - Crear un componente `Layout.jsx` con una barra de navegación simple (Bottom Navigation para móvil) que permita moverse entre las páginas.
+2.  **Añadir el Botón en "Inventario":**
+    - Modificar `src/pages/Inventario.jsx`.
+    - Añadir un "Floating Action Button" (FAB) de MUI en la esquina inferior derecha.
+    - Este botón navegará a la nueva ruta `/inventario/nuevo`.
 
-3.  **Implementar la Pantalla Principal (Dashboard):**
-    - Diseñar las tarjetas de resumen (`Total`, `Disponibles`, `Prestados`, etc.) usando MUI Card.
-    - Por ahora, los datos serán estáticos.
+3.  **Crear la Nueva Página y Ruta:**
+    - Crear el nuevo archivo de página: `src/pages/NuevoInstrumento.jsx`.
+    - Actualizar `App.jsx` para registrar la ruta `/inventario/nuevo` y asociarla al componente `NuevoInstrumento`.
 
-4.  **Desarrollar Módulo de Inventario:**
-    - Crear la página `Inventario.jsx`.
-    - Implementar la funcionalidad de `firestoreService.js` para leer la colección `instrumentos`.
-    - Mostrar los instrumentos en una lista o cuadrícula de tarjetas.
-    - Añadir un campo de búsqueda para filtrar por `nombre` o `identificador`.
+4.  **Construir el Formulario de Nuevo Instrumento:**
+    - En `NuevoInstrumento.jsx`, construir un formulario usando componentes de MUI.
+    - Incluirá campos para: `nombre`, `identificador`, `marca`, `modelo`, `observaciones`.
+    - Incluirá un componente para capturar/subir una foto.
 
-5.  **Crear Flujo de Préstamo:**
-    - Diseñar el formulario en `NuevoPrestamo.jsx` para registrar un préstamo.
-    - El formulario incluirá campos para `solicitante`, `realizadoPor` (dropdown), fechas y la posibilidad de añadir múltiples artículos.
-    - Implementar la lógica para buscar y seleccionar instrumentos del inventario.
-    - **Integrar la subida de imágenes a ImageKit.io para la `foto de salida`**.
-    - Al guardar, crear el documento en la colección `prestamos` y actualizar el estado de los `instrumentos` correspondientes en Firestore.
+5.  **Implementar la Lógica de Guardado:**
+    - Al enviar el formulario:
+        a. Subir la imagen del instrumento a **Cloudinary** (reutilizando la lógica existente).
+        b. Obtener la URL de la imagen.
+        c. Crear un nuevo documento en la colección `instrumentos` de Firestore.
+        d. El documento contendrá todos los campos del formulario más la `fotoURL` y un `estado` por defecto de `"disponible"`.
+    - Tras guardar con éxito, redirigir al usuario de vuelta a la página de Inventario y mostrar una notificación de éxito.
 
-6.  **Desarrollar Flujo de Devolución:**
-    - Crear una vista `DetallePrestamo.jsx` para ver un préstamo activo.
-    - Permitir registrar la devolución de cada artículo, incluyendo `condición de retorno` y `foto de retorno` (subida a ImageKit.io).
-    - Al devolver, actualizar el estado del ítem en el préstamo, y el estado y `cantidadDisponible` del instrumento principal.
-
-7.  **Implementar Historial y Bitácora:**
-    - Cada vez que se cree un préstamo o se realice una devolución, se añadirá un registro a la colección `bitacora`.
-    - Crear la página `Historial.jsx` para mostrar estos registros.
-
-8.  **Estilos Finales y Responsividad:**
-    - Asegurar que todas las pantallas y componentes sean completamente responsivos y se vean bien en dispositivos móviles y de escritorio.
-    - Aplicar el tema de MUI de forma consistente.
+6.  **Fusionar y Desplegar:**
+    - Una vez que la funcionalidad esté completa y probada, fusionar (merge) la rama `feature/add-instrument-form` de vuelta a `main`.
+    - Subir los cambios a GitHub.

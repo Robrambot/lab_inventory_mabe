@@ -26,9 +26,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { db } from '../firebase';
 import { collection, getDocs, query, where, writeBatch, doc, Timestamp } from 'firebase/firestore';
-
-const CLOUD_NAME = 'dq9bdcdpw';
-const UPLOAD_PRESET = 'prestamos-app';
+import { uploadToCloudinary } from '../services/cloudinaryService'; // Importar el servicio
 
 const NuevoPrestamo = () => {
   // Form states
@@ -48,7 +46,7 @@ const NuevoPrestamo = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  const responsables = ['Francisco', 'Uriel', 'Guillermo'];
+  const responsables = ['Francisco', 'Uriel', 'Guillermo C','Capetillo','Alexis'];
 
   const fetchInstrumentos = async () => {
     const q = query(collection(db, 'instrumentos'), where('estado', '==', 'disponible'));
@@ -78,45 +76,16 @@ const NuevoPrestamo = () => {
     fetchInstrumentos();
   }
 
-  const uploadToCloudinary = async () => {
-    if (!fotoFile) return null;
-
-    const formData = new FormData();
-    formData.append('file', fotoFile);
-    formData.append('upload_preset', UPLOAD_PRESET);
-
-    try {
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al subir la imagen a Cloudinary.');
-      }
-
-      const data = await response.json();
-      return data.secure_url;
-
-    } catch (e) {
-      console.error(e);
-      setError(e.message);
-      return null;
-    }
-  }
-
   const handleSavePrestamo = async () => {
     if (!isFormValid()) return;
     setIsSubmitting(true);
     setError('');
     
     try {
-      // 1. Subir la imagen a Cloudinary
-      const fotoUrl = await uploadToCloudinary();
+      // 1. Subir la imagen a Cloudinary usando el servicio
+      const fotoUrl = await uploadToCloudinary(fotoFile);
       if (!fotoUrl) {
-          // Si la subida falla, el error ya se ha establecido en uploadToCloudinary
-          setIsSubmitting(false);
-          return;
+          throw new Error('La subida de la imagen falló.');
       }
 
       // 2. Preparar los datos para Firestore
@@ -152,7 +121,7 @@ const NuevoPrestamo = () => {
 
     } catch (e) {
       console.error("Error al guardar el préstamo: ", e);
-      setError(`Error al guardar en Firestore: ${e.message}`);
+      setError(`Error: ${e.message}`);
     } finally {
       setIsSubmitting(false);
     }

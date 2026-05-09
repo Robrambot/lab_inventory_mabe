@@ -1,4 +1,4 @@
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
 
 export const getInstrumentos = async () => {
@@ -8,4 +8,19 @@ export const getInstrumentos = async () => {
     instrumentos.push({ id: doc.id, ...doc.data() });
   });
   return instrumentos;
+};
+
+export const addInstrumento = async (instrumentoData) => {
+  try {
+    const docRef = await addDoc(collection(db, "instrumentos"), {
+      ...instrumentoData,
+      estado: "disponible", // Estado por defecto
+      fechaCreacion: serverTimestamp(),
+      activo: true,
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error al añadir el instrumento: ", error);
+    throw new Error('No se pudo guardar el nuevo instrumento.');
+  }
 };

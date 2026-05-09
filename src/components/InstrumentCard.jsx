@@ -19,7 +19,8 @@ const estadoColors = {
 
 const InstrumentCard = ({ instrumento }) => {
   const navigate = useNavigate();
-  const { nombre, identificador, imagen, estado, prestamoActualId } = instrumento;
+  // Mantenemos la desestructuración original para no romper nada
+  const { nombre, identificador, estado, prestamoActualId } = instrumento;
 
   const isClickable = estado === 'prestado' && prestamoActualId;
 
@@ -35,7 +36,8 @@ const InstrumentCard = ({ instrumento }) => {
         <CardMedia
           component="img"
           sx={{ width: 151 }}
-          image={imagen || 'https://via.placeholder.com/151'}
+          // Lógica corregida: soporta fotoURL (nuevo) e imagen (antiguo)
+          image={instrumento.fotoURL || instrumento.imagen || 'https://via.placeholder.com/151'}
           alt={nombre}
         />
         <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>

@@ -1,5 +1,6 @@
 
 import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { getInstrumentos } from "../services/firestoreService";
 import InstrumentCard from "../components/InstrumentCard";
 import { 
@@ -14,18 +15,18 @@ import {
   Select, 
   MenuItem, 
   Button, 
-  CircularProgress 
+  CircularProgress,
+  Fab
 } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 
 const Inventario = () => {
-  // State for the master list of instruments
+  const navigate = useNavigate();
   const [instrumentos, setInstrumentos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // States for filtering
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
@@ -46,7 +47,6 @@ const Inventario = () => {
     fetchInstrumentos();
   }, []);
 
-  // Memoized filtering logic
   const filteredInstrumentos = useMemo(() => {
     return instrumentos.filter((instrumento) => {
       const searchMatch = searchTerm.toLowerCase() === '' ? true : 
@@ -63,6 +63,10 @@ const Inventario = () => {
     setSearchTerm("");
     setStatusFilter("");
   };
+
+  const handleAddInstrument = () => {
+    navigate('/inventario/nuevo');
+  }
 
   return (
     <Container maxWidth="lg">
@@ -130,6 +134,18 @@ const Inventario = () => {
           )}
         </Grid>
       )}
+       <Fab 
+        color="primary" 
+        aria-label="add" 
+        sx={{ 
+          position: 'fixed',
+          bottom: 16,
+          right: 16,
+        }}
+        onClick={handleAddInstrument}
+      >
+        <AddIcon />
+      </Fab>
     </Container>
   );
 };
